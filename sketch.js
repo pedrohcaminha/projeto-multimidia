@@ -18,6 +18,10 @@ let osc = []
 
 let last = [false, false, false, false, false, false, false]
 
+let img;
+
+
+var notas = [ 60, 62, 64, 65, 67, 69, 71];
 function setup() {
 	
 	createCanvas(windowWidth, windowHeight);
@@ -33,6 +37,10 @@ function setup() {
 		osc[i].start();
 		osc[i].amp(0);
 	}
+	saveCanvas =  createGraphics(windowWidth, windowHeight);
+
+	input = createFileInput(handleFile);
+	input.position(windowWidth-20, 260, 20, 20);
 }
 
 function draw() {
@@ -95,7 +103,45 @@ function draw() {
 	line(windowWidth-17, 225, windowWidth-3, 230);
 	line(windowWidth-17, 235, windowWidth-3, 230);
 	line(windowWidth-17, 235, windowWidth-17, 225);
+	//DOWNLOAD
+	strokeWeight(1);
+	stroke(0);
+	fill(255);
+	rect(windowWidth-20, 240, 19, 19);
+	line(windowWidth-10, 245, windowWidth-10, 257);
+	line(windowWidth-15, 250, windowWidth-10, 257);
+	line(windowWidth-5, 250, windowWidth-10, 257);
+	//UPLOAD
+	// strokeWeight(1);
+	// stroke(0);
+	// fill(255);
+	// rect(windowWidth-20, 260, 19, 19);
+	// line(windowWidth-10, 265, windowWidth-10, 277);
+	// line(windowWidth-15, 270, windowWidth-10, 265);
+	// line(windowWidth-5, 270, windowWidth-10, 265);
+	//OPCA
+	strokeWeight(1);
+	stroke(0);
+	fill(255);
+	rect(windowWidth-20, 280, 19, 19);
+	ellipse(windowWidth-10, 290, 3)
+	//OPCB
+	strokeWeight(1);
+	stroke(0);
+	fill(255);
+	rect(windowWidth-20, 300, 19, 19);
+	ellipse(windowWidth-10, 310, 8)
+	//OPCC
+	strokeWeight(1);
+	stroke(0);
+	fill(255);
+	rect(windowWidth-20, 320, 19, 19);
+	ellipse(windowWidth-10, 330, 13)
 	//Scanner
+	if(img){
+		image(img,20,0,windowWidth-40,windowHeight);
+		img = false;
+	}
 	if(scanner){
 		fill(255, 0 ,0, 40)
 		noStroke()
@@ -193,10 +239,31 @@ function mouseClicked(){
 	}else if(mouseX >= windowWidth-20 & mouseY<=220 & !scanner){
 		sizeD--
 		sizeD = max(sizeD, 1);
+    //SCANNER
 	}else if(mouseX >= windowWidth-20 & mouseY<=240 & !scanner){
 		scanner = true;
 		loadPixels();
 		auxPixels = pixels;
+	// Download
+	}else if(mouseX >= windowWidth-20 & mouseY<=260 & !scanner){
+		let c = get(20,0,windowWidth-40,windowHeight);
+    	saveCanvas.image(c, 0, 0);
+    	save(saveCanvas, "artworkwithmusic.png");
+    // //Upload
+	// }else if(mouseX >= windowWidth-20 & mouseY<=280 & !scanner){
+	// 	console.log("upload")
+	//OPCA
+	}else if(mouseX >= windowWidth-20 & mouseY<=300 & !scanner){
+		notas = [ 48, 50, 52, 53, 55, 57, 59];
+		console.log("a")
+	//OPCB
+	}else if(mouseX >= windowWidth-20 & mouseY<=320 & !scanner){
+		notas = [ 60, 62, 64, 65, 67, 69, 71];
+		console.log("b")
+	// OPCC
+	}else if(mouseX >= windowWidth-20 & mouseY<=340 & !scanner){
+		notas = [ 72, 74, 76, 77, 79, 81, 83];
+		console.log("c")
 	}
 }
 
@@ -270,12 +337,12 @@ function ColorsInLine(x){
 
 	playTones(notes, notesb)
 }
-var noteas = [ 60, 62, 64, 65, 67, 69, 71];
+
 function playTones(notes, notesb){
 	for(let i = 0; i < 7; i++){
 		if(notesb[i]){
 			if(!last[i]){
-				osc[i].freq(midiToFreq(noteas[i]));
+				osc[i].freq(midiToFreq(notas[i]));
 				osc[i].fade(0.5,0.2);
 			}
 		}else{
@@ -287,15 +354,12 @@ function playTones(notes, notesb){
 	last = notesb
 }
 
-// function playNote(note, duration) {
-// 	osc.freq(midiToFreq(note));
-// 	// Fade it in
-// 	osc.fade(0.5,0.01);
-  
-// 	// If we sest a duration, fade it out
-// 	if (duration) {
-// 	  setTimeout(function() {
-// 		osc.fade(0,0.01);
-// 	  }, duration-50);
-// 	}
-// }
+function handleFile(file) {
+	print(file);
+	if (file.type === 'image') {
+	  img = createImg(file.data, '');
+	  img.hide();
+	} else {
+	  img = null;
+	}
+  }
